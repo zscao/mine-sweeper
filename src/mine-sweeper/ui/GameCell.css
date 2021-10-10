@@ -1,0 +1,71 @@
+.mine-box {
+  height: 26px;
+  width: 26px;
+  /* border: 1px solid gray; */
+  display: inline-block;
+  margin: 0;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.mine-box-inner {
+  height: 24px;
+  width: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: default;
+}
+
+.mine-box-inner.holding {
+  box-shadow: inset 2px 2px 2px rgba(154, 147, 140, 0.5), 2px 2px 2px rgba(255, 255, 255, 1);
+}
+
+.mine-box-inner.init {
+  -moz-box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 1), 2px 2px 2px rgba(154, 147, 140, 0.5);
+  -webkit-box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 1), 2px 2px 2px rgba(154, 147, 140, 0.5);
+  box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 1), 2px 2px 2px rgba(154, 147, 140, 0.5);
+}
+
+.mine-box-inner.flagged {
+  box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 1), 2px 2px 2px rgba(154, 147, 140, 0.5);
+  color: #FF0000;
+}
+
+.mine-box-inner.revealed {
+  border-right: 1px solid rgba(154, 147, 140, 0.5);
+  border-bottom: 1px solid rgba(154, 147, 140, 0.5);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mine-box-inner.revealed.cell-1 {
+  color: #0D00FD;
+}
+.mine-box-inner.revealed.cell-2 {
+  color: #347E0D;
+}
+.mine-box-inner.revealed.cell-3 {
+  color: #EC2F00;
+}
+.mine-box-inner.revealed.cell-4 {
+  color: #03007F;
+}
+.mine-box-inner.revealed.cell-5 {
+  color: #7F2317;
+}
+.mine-box-inner.revealed.cell-6 {
+  color: #357E80;
+}
+.mine-box-inner.revealed.cell-7 {
+  color: #5B0B93;
+}
+.mine-box-inner.revealed.cell-8 {
+  color: #E6651B;
+}
+.mine-box-inner.revealed.cell-9 {
+  color: #41AFF1;
+}
+.mine-box-inner.revealed.cell-mine {
+  color: #000000;
+}
