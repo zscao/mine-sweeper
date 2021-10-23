@@ -27,6 +27,10 @@
   box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 1), 2px 2px 2px rgba(154, 147, 140, 0.5);
 }
 
+.mine-box-inner.init:hover {
+  background-color: #f5f0eb;;
+}
+
 .mine-box-inner.flagged {
   box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 1), 2px 2px 2px rgba(154, 147, 140, 0.5);
   color: #FF0000;
@@ -67,6 +71,5 @@
   color: #41AFF1;
 }
 .mine-box-inner.revealed.cell-mine {
-  background-color: rgb(255, 103, 103);
   color: #000000;
 }

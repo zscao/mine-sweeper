@@ -5,6 +5,7 @@ import { GameStatus } from '../game/types'
 
 type ControlPanelProps = {
   gameStatus?: GameStatus;
+  timeUsed: number;
   minesLeft: number;
   onReset: () => void;
   onMouseHolding: () => void;
@@ -12,12 +13,9 @@ type ControlPanelProps = {
 }
 
 
-export function ControlPanel({minesLeft, mouseHolding, gameStatus, onReset, onMouseHolding}: ControlPanelProps) {
+export function ControlPanel({minesLeft, timeUsed, mouseHolding, gameStatus, onReset, onMouseHolding}: ControlPanelProps) {
 
   const [ mouseIn, setMouseIn ] = useState(false)
-
-  if(minesLeft > 999) minesLeft = 999
-  if(minesLeft < -99) minesLeft = minesLeft % 100
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
@@ -36,6 +34,10 @@ export function ControlPanel({minesLeft, mouseHolding, gameStatus, onReset, onMo
     }
   }
 
+  if(minesLeft > 999) minesLeft = 999
+  if(minesLeft < -99) minesLeft = minesLeft % 100
+
+  if(timeUsed > 999) timeUsed = 999
 
   return (
     <div className='control-panel'>
@@ -46,7 +48,7 @@ export function ControlPanel({minesLeft, mouseHolding, gameStatus, onReset, onMo
         onMouseOut={() => setMouseIn(false)}
         onMouseEnter={() => setMouseIn(true)}
       >{getGamsStatusSymbal(gameStatus)}</div>
-      <div className="counter">000</div>
+      <div className="counter">{zeroPad(timeUsed, 3)}</div>
     </div>
   )
 }

@@ -18,6 +18,7 @@ export interface MineSweeperInterface {
 
   get cells(): readonly Cell[][]
 
+  start(): void;
   reveal(row: number, col: number): void
   revealSurroundings(row: number, col: number): void
   flag(row: number, col: number): void

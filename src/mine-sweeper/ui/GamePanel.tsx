@@ -63,7 +63,6 @@ export function GamePanel({cells, mouseHolding, ...actions}: GamePanelProps) {
   }
 
   const handleBothButtonDown = (cell: Cell, row: number, col: number) => {
-
     setHeldType('multi')
     setHeldCells(getSurroundingCells(row, col, cells))
     actions.onMouseHolding()
