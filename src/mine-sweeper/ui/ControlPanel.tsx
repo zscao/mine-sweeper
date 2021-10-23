@@ -63,10 +63,10 @@ function zeroPad(value: number, size: number): string {
 
 function getGamsStatusSymbal(status?: GameStatus): string {
   switch(status) {
-    case 'init': return 'A'
-    case 'running': return 'R'
-    case 'lost': return 'L'
-    case 'won': return 'W'
-    default: return 'O'
+    case 'init': return '🙂'
+    case 'running': return '🙂'
+    case 'lost': return '🤕'
+    case 'won': return '😀'
+    default: return '🙂'
   }
 }

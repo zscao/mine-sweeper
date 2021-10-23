@@ -6,7 +6,7 @@ import { MineSweeperInterface, Cell, GameStatus } from '../game/types'
 import { MineSweeper } from '../game/MineSweeper'
 import { GamePanel } from './GamePanel'
 import { ControlPanel } from './ControlPanel'
-import { useMouseHolding } from './hooks'
+import { useMouseHolding } from './useMouseHolding'
 
 export function GameBoard() {
 
@@ -17,7 +17,7 @@ export function GameBoard() {
   const [width, setWidth] = useState(0)
 
   const reset = useCallback(() => {
-    const game = new MineSweeper(16, 30, 9)
+    const game = new MineSweeper(16, 30, 99)
     game.start()
     setGame(game)
   }, [setGame])
@@ -36,16 +36,30 @@ export function GameBoard() {
     setWidth(game.cols * 26 + 6)
   }, [game, setCells, setWidth])
 
+  const refreshGameStatus = () => {
+    if(!game) return
+
+    setStatus(game.status)
+    setCells(game.cells)
+    setMinesLeft(game.minesLeft)
+  }
+
   const revealCell = (row: number, col: number) => {
 
     if(!game || status !== 'running') return
 
     game.reveal(row, col)
 
-    //console.log('game: ', game)
-    setStatus(game.status)
-    setCells(game.cells)
-    setMinesLeft(game.minesLeft)
+    refreshGameStatus()
+  }
+
+  const revealSurroundings = (row: number, col: number) => {
+
+    if(!game || status !== 'running') return
+
+    game.revealSurroundings(row, col)
+
+    refreshGameStatus()
   }
 
   const flagCell = (row: number, col: number) => {
@@ -53,10 +67,10 @@ export function GameBoard() {
 
     game.flag(row, col)
 
-    setStatus(game.status)
-    setCells(game.cells)
-    setMinesLeft(game.minesLeft)
+    refreshGameStatus()
   }
+
+
 
   const {mouseHolding, setMouseHolding, handleMouseUp, handleMouseLeave, handleMouseEnter } = useMouseHolding()
 
@@ -75,6 +89,7 @@ export function GameBoard() {
 
       <GamePanel cells={cells} 
         revealCell={revealCell} 
+        revealSurroundings={revealSurroundings}
         flagCell={flagCell} 
         onMouseHolding={() => handleMouseHoldingForCell()} 
         mouseHolding={game?.status === 'running' && mouseHolding === 'cell'} />

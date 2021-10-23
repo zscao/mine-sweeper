@@ -72,10 +72,10 @@ export class MineSweeper implements MineSweeperInterface {
 
   public reveal(row: number, col: number) {
 
-    if(this.status !== 'running' || this.outRange(row, col)) return;
+    if(this.status !== 'running' || this.outRange(row, col)) return
+    if(this.outRange(row, col)) return
 
     const index = row * this.cols + col
-    if(index < 0 || index >= this._cells.length) return
 
     const cell = this._cells[index]
     if(cell !== 'init') return
@@ -99,6 +99,30 @@ export class MineSweeper implements MineSweeperInterface {
       }
     }
   }
+
+  public revealSurroundings(row: number, col: number) {
+
+    if(this.status !== 'running' || this.outRange(row, col)) return;
+
+    const index = row * this.cols + col
+
+    const cell = this._cells[index]
+    if(cell !== 'revealed') return
+
+    // reveal surroundings only when the number of flagged mines matches the mine count in the cell
+    let flagged = 0
+    this.forSurroundings(row, col, (r, c) => {
+      const i = r * this.cols + c
+      if(this._cells[i] === 'flagged') flagged ++
+    })
+
+    if(this._mineCount[index] === flagged) {
+      this.forSurroundings(row, col, (r, c) => {
+        this.reveal(r, c)
+      })
+    }
+  }
+
 
   public flag(row: number, col: number) {
     if(this.status !== 'running' || this.outRange(row, col)) return;
@@ -149,31 +173,35 @@ export class MineSweeper implements MineSweeperInterface {
   }
 
   private countMines() {
-    for(let r = 0; r < this.rows; r++) {
-      for(let c = 0; c < this.cols; c++) {
-        const index = r * this.cols + c
-        if(this._mineIndex.includes(index)) {
-          this._mineCount[index] += 1
-  
-          this.incrementMines(r - 1, c - 1)
-          this.incrementMines(r - 1, c)
-          this.incrementMines(r - 1, c + 1)
-  
-          this.incrementMines(r, c - 1)
-          this.incrementMines(r, c + 1)
-  
-          this.incrementMines(r + 1, c - 1)
-          this.incrementMines(r + 1, c)
-          this.incrementMines(r + 1, c + 1)
-        }
+    for(let row = 0; row < this.rows; row++) {
+      for(let col = 0; col < this.cols; col++) {
+        const index = row * this.cols + col
+        if(!this._mineIndex.includes(index)) continue
+        
+        this._mineCount[index] += 1
+
+        this.forSurroundings(row, col, (r, c) => {
+          this._mineCount[r * this.cols + c] += 1
+        })
       }
     }  
   }
 
-  private incrementMines(row: number, col: number) {
-    if(this.outRange(row, col)) return
-    this._mineCount[row * this.cols + col] += 1
+
+  // provide an iteration of the position (row & col) of surrounding cells
+  private forSurroundings(row: number, col: number, callback: (r: number, c: number) => void) {
+    if(!this.outRange(row - 1, col - 1)) callback(row-1, col-1)
+    if(!this.outRange(row - 1, col)) callback(row-1, col)
+    if(!this.outRange(row - 1, col + 1)) callback(row-1, col+1)
+
+    if(!this.outRange(row, col - 1)) callback(row, col-1)
+    if(!this.outRange(row, col + 1)) callback(row, col+1)
+
+    if(!this.outRange(row + 1, col - 1)) callback(row+1, col-1)
+    if(!this.outRange(row + 1, col)) callback(row+1, col)
+    if(!this.outRange(row + 1, col + 1)) callback(row+1, col+1)
   }
+
 
   private outRange(row: number, col: number): boolean {
     return (row < 0 || col < 0 || row >= this.rows || col >= this.cols)

@@ -11,14 +11,14 @@ export function useMouseHolding() {
     }
   }, [])
 
-  const handleMouseUp = (e: React.PointerEvent<HTMLDivElement>) => {
+  const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
 
     // clear the holding status
-    setMouseHolding('')
+    if(e.button === 0) setMouseHolding('')
   }
 
-  const handleMouseLeave = (e: React.PointerEvent<HTMLDivElement>) => {
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
 
     if(mouseHolding) {
@@ -32,7 +32,7 @@ export function useMouseHolding() {
     }
   }
 
-  const handleMouseEnter = (e: React.PointerEvent<HTMLDivElement>) => {
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
 
     // clear up the timeout when mouse is back in time
