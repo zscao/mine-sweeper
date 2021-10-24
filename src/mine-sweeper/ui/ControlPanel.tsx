@@ -67,7 +67,7 @@ function getGamsStatusSymbal(status?: GameStatus): string {
   switch(status) {
     case 'init': return '🙂'
     case 'running': return '🙂'
-    case 'lost': return '🤕'
+    case 'lost': return '🙁'
     case 'won': return '😀'
     default: return '🙂'
   }

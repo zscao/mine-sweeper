@@ -1,0 +1,48 @@
+.main-container {
+  width: 1092px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.game-modes {
+  /* text-align: center; */
+  padding: 20px;
+}
+
+.game-modes > div {
+  min-width: 120px;
+  display: inline-block;
+  /* text-align: center; */
+  cursor: pointer;
+  color: darkblue;
+}
+
+.game-modes form {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.game-modes input {
+  width: 48px;
+  margin-right: 5px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+.game-modes input::-webkit-outer-spin-button,
+.game-modes input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.game-modes input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.game-modes > div:hover {
+  color: red;
+}
+
+.game-modes > div.active {
+  font-weight: 600;
+}

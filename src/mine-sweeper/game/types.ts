@@ -1,5 +1,9 @@
 
-export type CellStatus  = 'init' | 'flagged' | 'revealed'
+// init: the initial status
+// flagged: the cell is mark as a mine
+// revealed: the cell is revealed
+// trigger: the cell is a mine and been triggered
+export type CellStatus  = 'init' | 'flagged' | 'revealed' | 'triggered'
 
 export type Cell = {
   isMine: boolean;
@@ -18,7 +22,7 @@ export interface MineSweeperInterface {
 
   get cells(): readonly Cell[][]
 
-  start(): void;
+  start(row: number, col: number): void;
   reveal(row: number, col: number): void
   revealSurroundings(row: number, col: number): void
   flag(row: number, col: number): void

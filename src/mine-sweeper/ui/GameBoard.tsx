@@ -2,14 +2,22 @@ import './GameBoard.css'
 
 import { useEffect, useState, useCallback } from 'react'
 
-import { MineSweeperInterface, Cell, GameStatus } from '../game/types'
+import { MineSweeperInterface, Cell } from '../game/types'
 import { MineSweeper } from '../game/MineSweeper'
 import { GamePanel } from './GamePanel'
 import { ControlPanel } from './ControlPanel'
 import { useMouseHolding } from './useMouseHolding'
 import { useTimeCounter } from './useTimeCounter'
 
-export function GameBoard() {
+export type GameMode = {
+  name: string;
+  row: number;
+  col: number;
+  mines: number;
+}
+
+
+export function GameBoard({mode: gameMode}: {mode: GameMode}) {
 
   const [gameId, setGameId] = useState(0)
   const [game, setGame ] = useState<MineSweeperInterface>()
@@ -31,11 +39,11 @@ export function GameBoard() {
 
   // reset game will be triggered by the increment of game id
   useEffect(() => {
-    const game = new MineSweeper(16, 30, 99)
+    const game = new MineSweeper(gameMode.row, gameMode.col, gameMode.mines)
     //game.start()
     setGame(game)
     resetCounter()
-  }, [gameId, resetCounter])
+  }, [gameMode, gameId, resetCounter])
 
   // refresh game status when game is changed
   useEffect(() => {
@@ -47,7 +55,7 @@ export function GameBoard() {
 
   const revealCell = (row: number, col: number) => {
 
-    if(!game || !guardGameRunning()) return
+    if(!game || !guardGameRunning(row, col)) return
 
     game.reveal(row, col)
     refreshGameStatus()
@@ -55,24 +63,24 @@ export function GameBoard() {
 
   const revealSurroundings = (row: number, col: number) => {
 
-    if(!game || !guardGameRunning()) return
+    if(!game || !guardGameRunning(row, col)) return
 
     game.revealSurroundings(row, col)
     refreshGameStatus()
   }
 
   const flagCell = (row: number, col: number) => {
-    if(!game || !guardGameRunning()) return
+    if(!game || !guardGameRunning(row, col)) return
 
     game.flag(row, col)
     refreshGameStatus()
   }
 
-  const guardGameRunning = (): boolean => {
+  const guardGameRunning = (row: number, col: number): boolean => {
     if(!game) return false
 
     if(game.status === 'init') {
-      game.start()
+      game.start(row, col)
       startCounter()
     }
 
@@ -82,8 +90,8 @@ export function GameBoard() {
 
   const {mouseHolding, setMouseHolding, handleMouseUp, handleMouseLeave, handleMouseEnter } = useMouseHolding()
 
-  const handleMouseHoldingForCell = () => {
-    if(!guardGameRunning()) return
+  const handleMouseHoldingForCell = (row: number, col: number) => {
+    if(!guardGameRunning(row, col)) return
     setMouseHolding('cell')
   }
 
@@ -101,7 +109,7 @@ export function GameBoard() {
         revealCell={revealCell} 
         revealSurroundings={revealSurroundings}
         flagCell={flagCell} 
-        onMouseHolding={() => handleMouseHoldingForCell()} 
+        onMouseHolding={handleMouseHoldingForCell} 
         mouseHolding={game?.status === 'running' && mouseHolding === 'cell'} />
     </div>
   )

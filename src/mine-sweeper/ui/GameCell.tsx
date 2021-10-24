@@ -80,7 +80,7 @@ export function GameCell({cell, holding, ...events}: GameCellProps, ) {
     mineClass += ' flagged'
     symbal = '🚩'
   }
-  else if(cell.status === 'revealed') {
+  else if(cell.status === 'revealed' || cell.status === 'triggered') {
     mineClass += ' revealed'
     if(!cell.isMine) {
       mineClass += ' cell-' + cell.mineCount
@@ -88,7 +88,11 @@ export function GameCell({cell, holding, ...events}: GameCellProps, ) {
     }
     else {
       mineClass += ' cell-mine'
-      symbal = '☀' 
+      symbal = '✸' 
+
+      if(cell.status === 'triggered') {
+        mineClass += ' trigger'
+      }
     }
   }
 

@@ -11,7 +11,7 @@ type GamePanelProps = {
   revealCell: (row: number, col: number) => void;
   revealSurroundings: (row: number, col: number) => void;
   flagCell: (row: number, col: number) => void;
-  onMouseHolding: () => void;
+  onMouseHolding: (row: number, col: number) => void;
   mouseHolding: boolean;
 }
 
@@ -59,13 +59,13 @@ export function GamePanel({cells, mouseHolding, ...actions}: GamePanelProps) {
 
     setHeldType('single')
     setHeldCells([{row, col}])
-    actions.onMouseHolding()
+    actions.onMouseHolding(row, col)
   }
 
   const handleBothButtonDown = (cell: Cell, row: number, col: number) => {
     setHeldType('multi')
     setHeldCells(getSurroundingCells(row, col, cells))
-    actions.onMouseHolding()
+    actions.onMouseHolding(row, col)
   }
 
 

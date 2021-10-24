@@ -1,11 +1,11 @@
 import './App.css';
 
-import { GameBoard } from './mine-sweeper/ui/GameBoard'
+import { Main } from './mine-sweeper/Main'
 
 function App() {
   return (
     <div className="App">
-      <GameBoard />
+      <Main />
     </div>
   );
 }

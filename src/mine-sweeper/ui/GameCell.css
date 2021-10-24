@@ -73,3 +73,7 @@
 .mine-box-inner.revealed.cell-mine {
   color: #000000;
 }
+
+.mine-box-inner.revealed.cell-mine.trigger {
+  background-color: #FF0000;
+}
