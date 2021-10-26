@@ -55,43 +55,37 @@ export function GameBoard({mode: gameMode}: {mode: GameMode}) {
 
   const revealCell = (row: number, col: number) => {
 
-    if(!game || !guardGameRunning(row, col)) return
+    if(game?.status !== 'running') return
 
+    startCounter()
     game.reveal(row, col)
     refreshGameStatus()
   }
 
   const revealSurroundings = (row: number, col: number) => {
 
-    if(!game || !guardGameRunning(row, col)) return
+    if(game?.status !== 'running') return
 
+    startCounter()
     game.revealSurroundings(row, col)
     refreshGameStatus()
   }
 
   const flagCell = (row: number, col: number) => {
-    if(!game || !guardGameRunning(row, col)) return
+    if(game?.status !== 'running') return
 
+    startCounter()
     game.flag(row, col)
     refreshGameStatus()
-  }
-
-  const guardGameRunning = (row: number, col: number): boolean => {
-    if(!game) return false
-
-    if(game.status === 'init') {
-      game.start(row, col)
-      startCounter()
-    }
-
-    return game.status === 'running'
   }
 
 
   const {mouseHolding, setMouseHolding, handleMouseUp, handleMouseLeave, handleMouseEnter } = useMouseHolding()
 
   const handleMouseHoldingForCell = (row: number, col: number) => {
-    if(!guardGameRunning(row, col)) return
+    if(game?.status !== 'running') return
+    
+    startCounter()
     setMouseHolding('cell')
   }
 

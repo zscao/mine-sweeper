@@ -11,7 +11,7 @@ export type Cell = {
   mineCount: number;  // the number of surrounding mines (including the mine in itself)
 }
 
-export type GameStatus = 'init' | 'running' | 'won' | 'lost'
+export type GameStatus = 'running' | 'won' | 'lost'
 
 export interface MineSweeperInterface {
   get status(): GameStatus
@@ -22,7 +22,6 @@ export interface MineSweeperInterface {
 
   get cells(): readonly Cell[][]
 
-  start(row: number, col: number): void;
   reveal(row: number, col: number): void
   revealSurroundings(row: number, col: number): void
   flag(row: number, col: number): void

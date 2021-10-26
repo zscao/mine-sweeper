@@ -4,12 +4,13 @@ export class MineSweeper implements MineSweeperInterface {
 
   private _rows: number
   private _cols: number
-  private _mines: number;
   private _status: GameStatus
 
-  private _mineIndex: number[] = [] // the indexes of mine. the index is calculated as row * cols + col
-  private _mineCount: number[] = [] // the number of surrounding mines (including the mine in itself )
-  private _cells: CellStatus[] = []
+  private _mineIndex: number[] // the indexes of mine. the index is calculated as row * cols + col
+  private _mineCount: number[] // the number of surrounding mines (including the mine in itself )
+  private _cells: CellStatus[]
+
+  private _firstClick = true
 
   public get rows(): number {
     return this._rows
@@ -24,9 +25,6 @@ export class MineSweeper implements MineSweeperInterface {
   }
 
   public get minesLeft(): number {
-
-    if(this._status === 'init') return this._mines
-
     const total = this._mineIndex.length
     const flagged = this._cells.filter(c => c === 'flagged').length
     return  total - flagged
@@ -35,30 +33,16 @@ export class MineSweeper implements MineSweeperInterface {
   public get cells(): Cell[][] {
     const result: Cell[][] = []
 
-    const isInit = this._status === 'init'
-
     for(let r = 0; r < this.rows; r ++) {
       const row: Cell[] = []
 
       for(let c = 0; c < this.cols; c ++) {
-        
-        if(isInit) {
-          row.push({
-            isMine: false,
-            status: 'init',
-            mineCount: 0
-          })
-        }
-        else {
           const index = r * this.cols + c
-          const isMine = isInit ? true : this._mineIndex.includes(index)
-
           row.push({
-            isMine: isMine,
-            status: isInit ? 'init' : this._cells[index],
-            mineCount: isInit ? 0 : this._mineCount[index]
+            isMine: this.isMine(index),
+            status: this._cells[index],
+            mineCount: this._mineCount[index]
           })
-        }
       }
 
       result.push(row)
@@ -75,22 +59,19 @@ export class MineSweeper implements MineSweeperInterface {
 
     this._rows = rows
     this._cols = cols
-    this._mines = mines;
-    this._status = 'init'
+
+    this._cells = new Array<CellStatus>(this.rows * this.cols).fill('init')
+    this._mineCount = new Array<number>(this.rows * this.cols).fill(0)
+    this._mineIndex = initMines(this.rows, this.cols, mines)
+    
+    this._status = 'running'
   }
 
   // start the game with a given cell so the player will not hit a mine in the first click
   public start(row: number, col: number) {
-    if(this._status !== 'init') return
-    
-    this._mineIndex = initMines(this.rows, this.cols, this._mines, row, col)
-
-    this._cells = new Array<CellStatus>(this.rows * this.cols).fill('init')
-    this._mineCount = new Array<number>(this.rows * this.cols).fill(0)
 
     this.countMines()
 
-    this._status = 'running'
   }
 
   public reveal(row: number, col: number) {
@@ -103,8 +84,16 @@ export class MineSweeper implements MineSweeperInterface {
     const cell = this._cells[index]
     if(cell !== 'init') return
 
+
+    if(this._firstClick) {
+      if(this.isMine(index)) this.moveMine(index)
+      this.countMines()
+
+      this._firstClick = false
+    }
+
     // reveal all mines
-    if(this._mineIndex.includes(index)) {
+    if(this.isMine(index)) {
       this.revealMines()
       
       this._cells[index] = 'triggered'
@@ -115,7 +104,7 @@ export class MineSweeper implements MineSweeperInterface {
       
       // check if the player has won the game
       const solved = this._cells
-        .filter((x, index) => !this._mineIndex.includes(index))
+        .filter((x, index) => !this.isMine(index))
         .every(x => x === 'revealed')
 
       if(solved) {
@@ -201,7 +190,7 @@ export class MineSweeper implements MineSweeperInterface {
     for(let row = 0; row < this.rows; row++) {
       for(let col = 0; col < this.cols; col++) {
         const index = row * this.cols + col
-        if(!this._mineIndex.includes(index)) continue
+        if(!this.isMine(index)) continue
         
         this._mineCount[index] += 1
 
@@ -210,6 +199,34 @@ export class MineSweeper implements MineSweeperInterface {
         })
       }
     }  
+  }
+
+  private moveMine(indexToMove: number) {
+
+    const total = this._mineIndex.length
+
+    // move the mine to next available place if the percentage of mines is more than 50
+    if(total / this._cells.length > 0.5) {
+      let index = indexToMove + 1
+      while(true) {
+        if(index >= this._cells.length) index = 0;
+        if(!this.isMine(index)) {
+          this._mineIndex = [index, ...this._mineIndex.filter(x => x !== indexToMove)]
+          return
+        }
+        index++
+      }
+    }
+
+    // move the mine to a random place
+    while(true) {
+      const index = getRandomInt(total)
+
+      if(!this.isMine(index)) {
+        this._mineIndex = [index, ...this._mineIndex.filter(x => x !== indexToMove)]
+        return
+      }
+    }
   }
 
 
@@ -227,25 +244,25 @@ export class MineSweeper implements MineSweeperInterface {
     if(!this.outRange(row + 1, col + 1)) callback(row+1, col+1)
   }
 
+  private isMine(index: number): boolean {
+    return this._mineIndex.includes(index)
+  }
+
 
   private outRange(row: number, col: number): boolean {
     return (row < 0 || col < 0 || row >= this.rows || col >= this.cols)
   }
 }
 
-export function initMines(rows: number, cols: number, mines: number, row: number, col: number): number[] {
+export function initMines(rows: number, cols: number, mines: number): number[] {
 
   const total = rows * cols
 
   const result: number[] = []
 
-  const initIndex = row * cols + col;
   // init mines
   while(mines > 0) {
     const index = getRandomInt(total)
-
-    // the initial cell will never contain a mine
-    if(index === initIndex) continue;
 
     if(!result.includes(index)) {
       mines --

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 
 export function useTimeCounter() {
 
+  const [started, setStarted] = useState(false)
   const [counter, setCounter] = useState(0)
   const intervalRef = useRef<number>()
 
@@ -14,9 +15,12 @@ export function useTimeCounter() {
   const reset = useCallback(() => {
     if(intervalRef.current) window.clearInterval(intervalRef.current)
     setCounter(0)
+    setStarted(false)
   }, [intervalRef])
 
   const start = useCallback(() => {
+    if(started) return
+    setStarted(true)
     if(intervalRef.current) window.clearInterval(intervalRef.current)
 
     let c = 1
@@ -25,10 +29,13 @@ export function useTimeCounter() {
     intervalRef.current = window.setInterval(() => {
       setCounter(++c)
     }, 1000)
-  }, [setCounter, intervalRef])
+
+  }, [started, intervalRef])
 
   const stop = useCallback(() => {
     if(intervalRef.current) window.clearInterval(intervalRef.current)
+    setStarted(false)
+
   }, [intervalRef])
 
   return {
